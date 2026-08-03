@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
+import com.sist.web.vo.*;
 import java.util.*;
 import com.sist.web.entity.*;
 // 단점: JOIN이 어렵다 / SubQuery를 지원하지 않는다
@@ -22,11 +22,11 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Integer>{
 	 */
 	// 직접 SQL문장 생성 => findAll(page)
 	@Query(value="""
-				SELECT * 
-				FROM board 
+				SELECT no,subject,name,hit,TO_CHAR(regdate,'yyyy-mm-dd') AS dbday 
+				FROM jpaboard 
 				ORDER BY no DESC 
 				OFFSET :start ROWS FETCH NEXT 10 ROWS ONLY
 			""",nativeQuery = true)
-	public List<BoardEntity> boardListData(@Param("start") Integer start);
+	public List<BoardDTO> boardListData(@Param("start") Integer start);
 	
 }

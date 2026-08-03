@@ -4,6 +4,7 @@ import java.util.*;
 import org.springframework.stereotype.Service;
 import com.sist.web.entity.BoardEntity;
 import com.sist.web.repository.*;
+import com.sist.web.vo.BoardDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,13 +18,20 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public List<BoardEntity> boardListData(int start) {
+	public List<BoardDTO> boardListData(int start) {
 		return dao.boardListData(start);
 	}
 
 	@Override
-	public void boardUpdate(BoardEntity vo) {
-		dao.save(vo); // no에 값이 있는 경우 UPDATE
+	public boolean boardUpdate(BoardEntity vo) {
+		boolean bCheck=false;
+		BoardEntity dvo=dao.findByNo(vo.getNo());
+		if(dvo.getPwd().equals(vo.getPwd())) {
+			bCheck=true;
+			vo.setHit(dvo.getHit());
+			dao.save(vo); // no에 값이 있는 경우 UPDATE
+		}
+		return bCheck;
 	}
 
 	@Override
@@ -32,8 +40,14 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public void boardDelete(BoardEntity vo) {
-		dao.delete(vo);
+	public boolean boardDelete(BoardEntity vo) {
+		boolean bCheck=false;
+		BoardEntity dvo=dao.findByNo(vo.getNo());
+		if(dvo.getPwd().equals(vo.getPwd())) {
+			bCheck=true;
+			dao.delete(dvo);
+		}
+		return bCheck;
 	}
 
 	@Override
