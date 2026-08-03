@@ -27,7 +27,7 @@ h3{
 					<th width="20%" class="text-center success">번호</th>
 					<td width="30%" class="text-center">[[${vo.no}]]</td>
 					<th width="20%" class="text-center success">작성일</th>
-					<td width="30%" class="text-center">[[${vo.regdate}]]</td>
+					<td width="30%" class="text-center">[[${#temporals.format(board.regdate, 'yyyy-MM-dd')}]]</td>
 				</tr>
 				<tr>
 					<th width="20%" class="text-center success">작성자</th>
