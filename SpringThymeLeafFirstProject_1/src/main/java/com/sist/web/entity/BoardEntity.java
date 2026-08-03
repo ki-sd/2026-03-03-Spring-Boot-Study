@@ -75,10 +75,10 @@ public class BoardEntity {
 	private String pwd;
 	@Column(insertable = true,updatable = false)
 	@ColumnDefault("SYSDATE")
-	private String regdate;
+	private LocalDateTime regdate;
 	
 	@PrePersist
 	public void regdate() {
-		this.regdate=LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		this.regdate=LocalDateTime.now();
 	}
 }
