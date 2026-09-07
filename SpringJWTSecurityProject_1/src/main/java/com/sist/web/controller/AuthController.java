@@ -1,0 +1,54 @@
+package com.sist.web.controller;
+
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.sist.web.config.JwtTokenProvider;
+
+import lombok.RequiredArgsConstructor;
+
+@RestController
+@RequiredArgsConstructor
+public class AuthController {
+	private final AuthenticationManager manager;
+	private final JwtTokenProvider provider;
+	
+	@PostMapping("/loginAuth")
+	public ResponseEntity<?> login(@RequestParam(value="username",required=false)String username,@RequestParam(value="password",required=false)String password) {
+		Authentication auth=manager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+		UserDetails user=(UserDetails)auth.getPrincipal();
+		String token=provider.createToken(user.getUsername(),
+				   user.getAuthorities().iterator().next().getAuthority());
+		ResponseCookie cookie =
+				ResponseCookie.from(
+						"accessToken",
+						token
+						)
+					.httpOnly(true)
+					.secure(false)
+					.path("/")
+					.maxAge(3600)
+					.build();
+		return ResponseEntity
+	            .status(HttpStatus.FOUND)
+	            .header(
+	                HttpHeaders.SET_COOKIE,
+	                cookie.toString()
+	            )
+	            .header(
+	                HttpHeaders.LOCATION,
+	                "/home"
+	            )
+	            .build();
+	}
+}
